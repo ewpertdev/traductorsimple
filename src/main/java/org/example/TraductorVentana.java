@@ -3,11 +3,14 @@ package org.example;
 import java.awt.*;
 
 import javax.swing.*;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.MatteBorder;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 import java.awt.event.ActionEvent;
 
@@ -16,6 +19,7 @@ public class TraductorVentana {
     private JFrame frmTraductorIngls;
     private JTextField sEspanol;
     private JTextField sResultado;
+    private boolean modoOscuro = false;
 
     /**
      * Launch the application.
@@ -46,6 +50,44 @@ public class TraductorVentana {
         frmTraductorIngls.setIconImage(image);
     }
 
+    private void toggleDark(){
+        modoOscuro=!modoOscuro;
+
+        Color backgroundColor = modoOscuro ? Color.DARK_GRAY : Color.WHITE;
+        Color foregroundColor = modoOscuro ? Color.WHITE : Color.DARK_GRAY;
+        Color buttonColor = modoOscuro ? Color.LIGHT_GRAY : Color.BLACK;
+
+        frmTraductorIngls.getContentPane().setBackground(backgroundColor);
+
+        for(Component component : frmTraductorIngls.getContentPane().getComponents()) {
+            if(component instanceof JLabel || component instanceof JTextField || component instanceof JButton){
+                component.setForeground(foregroundColor);
+                component.setBackground(backgroundColor);
+            }
+        }
+
+        JButton btnTranslate = (JButton) frmTraductorIngls.getContentPane().getComponent(5);
+        btnTranslate.setBackground(buttonColor);
+    }
+
+    private void openFile() {
+        JFileChooser fileChooser = new JFileChooser();
+        int result = fileChooser.showOpenDialog(frmTraductorIngls);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            JOptionPane.showMessageDialog(frmTraductorIngls, "Archivo abierto: " + selectedFile.getName());
+        }
+    }
+
+    private void saveFile() {
+        JFileChooser fileChooser = new JFileChooser();
+        int result = fileChooser.showOpenDialog(frmTraductorIngls);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            JOptionPane.showMessageDialog(frmTraductorIngls, "Archivo guardado: " + selectedFile.getName());
+        }
+    }
+
     /**
      * Initialize the contents of the frame.
      */
@@ -57,10 +99,32 @@ public class TraductorVentana {
         frmTraductorIngls.getContentPane().setLayout(null);
         frmTraductorIngls.setLocationRelativeTo(null);
 
+        JMenuBar menuBar = new JMenuBar();
+        frmTraductorIngls.setJMenuBar(menuBar);
+
+        JMenu fileMenu = new JMenu("Archivo");
+        menuBar.add(fileMenu);
+
+        JMenuItem openItem = new JMenuItem("Abrir");
+        openItem.addActionListener(e->openFile());
+        fileMenu.add(openItem);
+
+        JMenuItem saveItem = new JMenuItem("Guardar");
+        saveItem.addActionListener(e->saveFile());
+        fileMenu.add(saveItem);
+
+        JMenuItem menuOscuro = new JMenuItem("Modo oscuro");
+        menuOscuro.addActionListener(e->toggleDark());
+        fileMenu.add(menuOscuro);
+
+        JMenuItem exitItem = new JMenuItem("Salir");
+        exitItem.addActionListener(e->System.exit(0));
+        fileMenu.add(exitItem);
 
         JLabel lblNewLabel = new JLabel("TRADUCTOR DAM");
         lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
-        lblNewLabel.setBounds(208, 39, 170, 34);
+        lblNewLabel.setBounds(265, 39, 170, 34);
+        lblNewLabel.setBackground(Color.black);
         frmTraductorIngls.getContentPane().add(lblNewLabel);
 
         JLabel lblNewLabel_1 = new JLabel("INTRODUCE PALABRA A TRADUCIR");
@@ -90,6 +154,7 @@ public class TraductorVentana {
         sResultado.setColumns(10);
 
         JButton btnNewButton = new JButton("TRADUCIR");
+        btnNewButton.setForeground(new Color(90,153,216));
         btnNewButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {//botón traducir
 
@@ -107,8 +172,9 @@ public class TraductorVentana {
                 }
             }
         });
-        btnNewButton.setBackground(Color.YELLOW);
-        btnNewButton.setBounds(113, 297, 121, 34);
+        btnNewButton.setBackground(Color.black);
+        btnNewButton.setBounds(265, 297, 121, 34);
+        btnNewButton.setBorder(new MatteBorder(5,5,5,5,Color.red));
         frmTraductorIngls.getContentPane().add(btnNewButton);
     }
 
